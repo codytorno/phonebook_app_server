@@ -78,6 +78,15 @@ app.post("/api/persons", (request, response) => {
       error: "number missing",
     });
   }
+  const matchingPerson = persons.find(
+    (person) => person.name.toLowerCase() === body.name.toLowerCase()
+  );
+  if (matchingPerson) {
+    return response.status(400).json({
+      error: "name must be unique",
+    });
+  }
+
   const person = {
     name: body.name,
     number: body.number,

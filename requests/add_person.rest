@@ -2,6 +2,33 @@ POST http://localhost:3001/api/persons/
 content-type: application/json
 
 {
-    "name": "Cody Torno",
+    "name": "Ada Lovelace",
+    "number": "1233-1233-23"
+}
+
+###
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "",
+    "number": "1233-1233-23"
+}
+
+###
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Ada Lovelace",
+    "number": ""
+}
+
+###
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Tom",
     "number": "1233-1233-23"
 }
