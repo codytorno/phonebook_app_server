@@ -1,0 +1,11 @@
+{
+  "name": "phonebook_app_backend",
+  "version": "0.0.1",
+  "description": "backend server for phonebook application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cody torno",
+  "license": "ISC"
+}
