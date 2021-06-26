@@ -4,6 +4,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+// use the build folder and populate base url with front end
+app.use(express.static("build"));
 
 // Logger
 const morgan = require("morgan");
@@ -49,10 +51,6 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
-
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
 
 app.get("/info", (request, response) => {
   response.send(
@@ -128,7 +126,8 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = 3001;
+// dev uses 3001, heroku uses whatever port it assigns
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
