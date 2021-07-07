@@ -1,91 +1,64 @@
 const express = require("express");
 const cors = require("cors");
+const dotExpand = require("dotenv-expand");
+dotExpand(require("dotenv").config({ path: ".env" }));
+const Person = require("./models/person");
+const logger = require("./logger");
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-// use the build folder and populate base url with front end
-app.use(express.static("build"));
-
-// Logger
-const morgan = require("morgan");
-// const logger = morgan("tiny");
-morgan.token("post-body", function (req) {
-  return JSON.stringify(req.body);
-});
-
-const logger = morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, "content-length"),
-    "-",
-    tokens["response-time"](req, res),
-    "ms",
-    tokens["post-body"](req, res),
-  ].join(" ");
-});
+// use statements
+app.use(express.json()); // allows request.body to be converted to json automatically
+app.use(cors()); // allows cors
+app.use(express.static("build")); // use the build folder and populate base url with front end
 app.use(logger);
 
-// static backend
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Marry Poppendick",
-    number: "39-23-6423122",
-  },
-];
+// gets the front end of website
+app.get("/", (request, response) => {
+  // if static front end is not built correctly throw 404 status error
+  response.status(404).end();
+});
 
+// show the number of people in the phonebook
 app.get("/info", (request, response) => {
-  response.send(
-    `<div>
-        <p>Phonebook has info for ${persons.length} people</p>
-        <p>${new Date()}</p>
-        </div`
-  );
+  Person.countDocuments().then((count) => {
+    response.send(
+      `<div>
+          <p>Phonebook has info for ${count} people</p>
+          <p>${new Date()}</p>
+        </div>`
+    );
+  });
 });
 
+// get all the people in the phonebook
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((people) => {
+    response.json(people);
+  });
 });
 
+// get a single person in the phonebook
 app.get(`/api/persons/:id`, (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  const id = request.params.id;
+  Person.findById(id)
+    .then((foundPerson) => {
+      response.json(foundPerson);
+    })
+    .catch((error) => {
+      response.status(404).end();
+    });
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  response.status(204).end();
+  const id = request.params.id;
+  persons = Person.findByIdAndDelete(id)
+    .then((deletedPerson) => {
+      response.json(deletedPerson);
+    })
+    .catch((error) => {
+      response.status(404).end();
+    });
 });
-
-const generateID = () => {
-  const maxID = persons.length > 0 ? Math.max(...persons.map((n) => n.id)) : 0;
-  return maxID + 1;
-};
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -100,24 +73,27 @@ app.post("/api/persons", (request, response) => {
       error: "number missing",
     });
   }
-  const matchingPerson = persons.find(
-    (person) => person.name.toLowerCase() === body.name.toLowerCase()
-  );
-  if (matchingPerson) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  Person.findOne({
+    name: { $regex: body.name, $options: "i" },
+  })
+    .then((foundPerson) => {
+      console.log("found Person", foundPerson);
+      if (foundPerson) {
+        return response.status(400).json({
+          error: "name must be unique",
+        });
+      } else {
+        const newPerson = new Person({
+          name: body.name,
+          number: body.number,
+        });
 
-  const person = {
-    name: body.name,
-    number: body.number,
-    id: generateID(),
-  };
-
-  persons = persons.concat(person);
-
-  response.json(person);
+        newPerson.save().then((savedPerson) => {
+          response.json(savedPerson);
+        });
+      }
+    })
+    .catch((error) => {});
 });
 
 const unknownEndpoint = (request, response) => {
@@ -127,7 +103,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 // dev uses 3001, heroku uses whatever port it assigns
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
