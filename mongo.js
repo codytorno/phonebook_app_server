@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+const dotenvExpand = require("dotenv-expand");
+dotenvExpand(require("dotenv").config({ path: ".env" }));
 
 // prevent this .js file from being executed without the mongodb database user and password
-if (process.argv.length > 4 && process.argv.length < 6) {
+if (process.argv.length >= 3 && process.argv.length <= 5) {
   console.log(
     "Please provide correct format: node mongo.js <username> <password> or node mongo.js <username> <password> <name> <number>"
   );
@@ -9,14 +11,12 @@ if (process.argv.length > 4 && process.argv.length < 6) {
 }
 
 // getting the password from node mongo.js <password>
-const username = process.argv[2];
-const password = process.argv[3];
-const name = process.argv[4];
-const number = process.argv[5];
+const argument = process.argv[2];
+const name = process.argv[3];
+const number = process.argv[4];
 
 // the url for the mongodb database that will store the objects as documents
-const url = `mongodb+srv://${username}:${password}@phonebookdb.ux8bp.mongodb.net/PhonebookDB?retryWrites=true&w=majority`;
-
+const url = process.env.URI;
 // define the connection properties
 mongoose.connect(url, {
   useNewUrlParser: true,
@@ -57,8 +57,9 @@ const GetAllPeople = () => {
   });
 };
 
-if (process.argv.length === 6) {
-  AddPerson();
-} else {
+if (argument == "-all") {
   GetAllPeople();
+}
+if (argument == "-add" && process.argv.length == 5) {
+  AddPerson();
 }
