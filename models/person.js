@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 // Get MongoDB URI
 const uri = process.env.URI;
 
 // Connect
-console.log(uri);
+console.log("connecting to:", uri);
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
@@ -21,9 +22,21 @@ mongoose
 
 // Create Person Schema
 const personSchema = mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    minLength: [3, "Name must be a minimum of 3 characters"],
+  },
+  number: {
+    type: String,
+    required: true,
+    minLength: [8, "Number must be at least 8 characters"],
+  },
 });
+
+// add validation plugin
+personSchema.plugin(uniqueValidator);
 
 // transform json to clean up return from database
 personSchema.set("toJSON", {

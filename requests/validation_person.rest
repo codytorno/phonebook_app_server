@@ -1,0 +1,33 @@
+// get all people
+
+Get http://localhost:3001/api/persons
+
+###
+// verify unique name
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Cody Torno",
+    "number": "1233-1233-23"
+}
+
+###
+// verify min name length
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "hi",
+    "number": "1233-1233-23"
+}
+
+###
+// verify min number length
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "kdfadkfjadf",
+    "number": "1"
+}
