@@ -38,22 +38,24 @@ app.get("/api/persons", (request, response) => {
 });
 
 // get a single person in the phonebook
-app.get(`/api/persons/:id`, (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   Person.findById(id)
     .then((foundPerson) => {
-      response.json(foundPerson);
+      if (foundPerson) {
+        response.json(foundPerson);
+      } else {
+        response.status(404).end();
+      }
     })
-    .catch((error) => {
-      response.status(404).end();
-    });
+    .catch((error) => next(error));
 });
 
 // delete a person by id
 app.delete("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
-  persons = Person.findByIdAndRemove(id)
-    .then((deletedPerson) => {
+  Person.findByIdAndRemove(id)
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));

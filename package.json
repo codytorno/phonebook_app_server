@@ -11,7 +11,9 @@
     "deployServer": "git push heroku master",
     "deployFull": "npm run buildUI && git add . && git commit -m \"Building UI for Deployment\" && git push && npm run deployServer",
     "log": "heroku logs --tail",
-    "open": "heroku open"
+    "open": "heroku open",
+    "lint": "eslint .",
+    "lintFix": "eslint --fix"
   },
   "author": "cody torno",
   "license": "ISC",
@@ -23,5 +25,8 @@
     "mongoose": "^5.13.2",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
   }
 }

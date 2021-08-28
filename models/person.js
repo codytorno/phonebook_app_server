@@ -13,7 +13,7 @@ mongoose
     useFindAndModify: false,
     useCreateIndex: true,
   })
-  .then((result) => {
+  .then(() => {
     console.log("Connected to Database!");
   })
   .catch((error) => {

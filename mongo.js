@@ -41,7 +41,7 @@ const AddPerson = () => {
     number: number,
   });
   // saving the person to the database and closing the connection
-  person.save().then((result) => {
+  person.save().then(() => {
     console.log(`added ${name} to the phonebook!`);
     mongoose.connection.close();
   });
@@ -49,17 +49,17 @@ const AddPerson = () => {
 
 const GetAllPeople = () => {
   // Retrieve all Person objects from the database
-  Person.find({}).then((result) => {
-    result.forEach((person) => {
+  Person.find({}).then(result => {
+    result.forEach(person => {
       console.log(person.name, person.number);
     });
     mongoose.connection.close();
   });
 };
 
-if (argument == "-all") {
+if (argument === "-all") {
   GetAllPeople();
 }
-if (argument == "-add" && process.argv.length == 5) {
+if (argument === "-add" && process.argv.length === 5) {
   AddPerson();
 }
