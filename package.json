@@ -7,11 +7,11 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd ../phonebook_app_react && npm run build --prod && cp -r build ../phonebook_app_server",
-    "deploy": "git push heroku master",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail",
-    "open:prod": "heroku "
+    "buildUI": "rm -rf build && cd ../phonebook_app_react && npm run build --prod && cp -r build ../phonebook_app_server",
+    "deployServer": "git push heroku master",
+    "deployFull": "npm run buildUI && git add . && git commit -m \"Building UI for Deployment\" && git push && npm run deployServer",
+    "log": "heroku logs --tail",
+    "open": "heroku open"
   },
   "author": "cody torno",
   "license": "ISC",
