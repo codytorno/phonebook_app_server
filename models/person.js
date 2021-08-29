@@ -1,25 +1,6 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
-// Get MongoDB URI
-const uri = process.env.URI;
-
-// Connect
-console.log("connecting to:", uri);
-mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    console.log("Connected to Database!");
-  })
-  .catch((error) => {
-    console.log("Error Connecting to database", error.message);
-  });
-
 // Create Person Schema
 const personSchema = mongoose.Schema({
   name: {
